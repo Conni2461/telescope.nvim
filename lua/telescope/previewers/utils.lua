@@ -43,10 +43,12 @@ utils.job_maker = function(cmd, bufnr, opts)
           vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, j:result())
         end
         if opts.callback then opts.callback(bufnr, j:result()) end
+        if opts.sb then opts.sb:update() end
       end)
     }):start()
   else
     if opts.callback then opts.callback(bufnr) end
+    if opts.sb then opts.sb:update() end
   end
 end
 

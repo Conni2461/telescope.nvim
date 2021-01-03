@@ -4,6 +4,7 @@ local utils = require('telescope.utils')
 local putils = require('telescope.previewers.utils')
 local Previewer = require('telescope.previewers.previewer')
 local conf = require('telescope.config').values
+local scrollbar = require('telescope.previewers.scrollbar')
 
 local pfiletype = require('plenary.filetype')
 
@@ -25,10 +26,12 @@ previewers.file_maker = function(filepath, bufnr, opts)
 
       if opts.callback then opts.callback(bufnr) end
       if not opts.state or bufnr == opts.state.bufnr then putils.highlighter(bufnr, ft) end
+      if opts.sb then opts.sb:update() end
     end))
   else
     if opts.callback then opts.callback(bufnr) end
     if not opts.state or bufnr == opts.state.bufnr then putils.highlighter(bufnr, ft) end
+    if opts.sb then opts.sb:update() end
   end
 end
 
@@ -77,6 +80,8 @@ previewers.new_buffer_previewer = function(opts)
       opt_teardown(self)
     end
 
+    self.state.sb:close()
+
     local last_nr
     if opts.keep_last_buf then
       last_nr = global_state.get_global_key('last_preview_bufnr')
@@ -98,6 +103,7 @@ previewers.new_buffer_previewer = function(opts)
   function opts.preview_fn(self, entry, status)
     if get_bufnr(self) == nil then
       set_bufnr(self, vim.api.nvim_win_get_buf(status.preview_win))
+      if not self.state.sb then self.state.sb = scrollbar:create(status.preview_win) end
     end
 
     if opts.get_buffer_by_name and get_bufnr_by_bufname(self, opts.get_buffer_by_name(self, entry)) then
@@ -143,6 +149,7 @@ previewers.new_buffer_previewer = function(opts)
       vim.api.nvim_buf_call(self.state.bufnr, function()
         vim.cmd([[normal! ]] .. count .. input)
       end)
+      if self.state.sb then self.state.sb:update() end
     end
   end
 
@@ -161,6 +168,7 @@ previewers.cat = defaulter(function(_)
       conf.buffer_previewer_maker(p, self.state.bufnr, {
         bufname = self.state.bufname,
         state = self.state,
+        sb = self.sb,
       })
     end
   }
@@ -196,6 +204,7 @@ previewers.vimgrep = defaulter(function(_)
       conf.buffer_previewer_maker(p, self.state.bufnr, {
         bufname = self.state.bufname,
         state = self.state,
+        sb = self.sb,
         callback = function(bufnr)
           if lnum ~= 0 then
             pcall(vim.api.nvim_buf_add_highlight, bufnr, ns_previewer, "TelescopePreviewLine", lnum - 1, 0, -1)
@@ -256,6 +265,7 @@ previewers.ctags = defaulter(function(_)
     define_preview = function(self, entry, status)
       conf.buffer_previewer_maker(entry.filename, self.state.bufnr, {
         bufname = self.state.bufname,
+        sb = self.sb,
         callback = function(bufnr)
           vim.api.nvim_buf_call(bufnr, function()
             determine_jump(entry)(self, bufnr)
@@ -294,6 +304,7 @@ previewers.builtin = defaulter(function(_)
 
       conf.buffer_previewer_maker(entry.filename, self.state.bufnr, {
         bufname = self.state.bufname,
+        sb = self.sb,
         callback = function(bufnr)
           vim.api.nvim_buf_call(bufnr, function()
             pcall(vim.fn.matchdelete, self.state.hl_id, self.state.winid)
@@ -333,6 +344,7 @@ previewers.help = defaulter(function(_)
 
       conf.buffer_previewer_maker(entry.filename, self.state.bufnr, {
         bufname = self.state.bufname,
+        sb = self.sb,
         callback = function(bufnr)
           vim.api.nvim_buf_call(bufnr, function()
             vim.cmd(':ownsyntax help')
