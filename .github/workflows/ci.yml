@@ -3,22 +3,37 @@ name: Tests
 on: [push, pull_request]
 
 jobs:
-  x64-ubuntu:
-    name: X64-ubuntu
-    runs-on: ubuntu-20.04
+  native:
+    name: native
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, macos-10.15]
+        include:
+          - os: ubuntu-20.04
+            url: https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
+            manager: sudo apt
+            packages: fd-find
+          - os: macos-10.15
+            url: https://github.com/neovim/neovim/releases/download/nightly/nvim-macos.tar.gz
+            manager: brew
+            packages: fd
     steps:
       - uses: actions/checkout@v2
       - run: date +%F > todays-date
       - name: Restore cache for today's nightly.
         uses: actions/cache@v2
         with:
-          path: |
-            _neovim
-          key: ${{ runner.os }}-x64-${{ hashFiles('todays-date') }}
+          path: _neovim
+          key: ${{ matrix.os }}-${{ hashFiles('todays-date') }}
 
       - name: Prepare
         run: |
-          sudo apt install fd-find
+          ${{ matrix.manager }} install ${{ matrix.packages }}
+          test -d _neovim || {
+            mkdir -p _neovim
+            curl -sL ${{ matrix.url }} | tar xzf - --strip-components=1 -C "${PWD}/_neovim"
+          }
           mkdir -p ~/.local/share/nvim/site/pack/vendor/start
           git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/vendor/start/plenary.nvim
           git clone --depth 1 https://github.com/nvim-lua/popup.nvim ~/.local/share/nvim/site/pack/vendor/start/popup.nvim
@@ -27,12 +42,13 @@ jobs:
 
       - name: Run tests
         run: |
-          curl -OL https://raw.githubusercontent.com/norcalli/bot-ci/master/scripts/github-actions-setup.sh
-          source github-actions-setup.sh nightly-x64
+          export PATH="${PWD}/_neovim/bin:${PATH}"
+          export VIM="${PWD}/_neovim/share/nvim/runtime"
+          nvim --version
           make test
 
   appimage-ubuntu:
-    name: Appimage-ubuntu
+    name: appimage-ubuntu
     runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
@@ -61,5 +77,28 @@ jobs:
 
       - name: Run tests
         run: |
-            export PATH="${PWD}/build/:${PATH}"
-            make test
+          export PATH="${PWD}/build/:${PATH}"
+          make test
+
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Prepare
+        run: |
+          curl -sL https://github.com/neovim/neovim/releases/download/nightly/nvim-win64.zip --output nvim-win64.zip
+          unzip nvim-win64.zip
+          rm nvim-win64.zip
+          mkdir -p ~/AppData/Local/nvim-data/site/pack/vendor/start
+          git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/AppData/Local/nvim-data/site/pack/vendor/start/plenary.nvim
+          git clone --depth 1 https://github.com/nvim-lua/popup.nvim ~/AppData/Local/nvim-data/site/pack/vendor/start/popup.nvim
+          git clone --depth 1 https://github.com/kyazdani42/nvim-web-devicons ~/AppData/Local/nvim-data/site/pack/vendor/start/nvim-web-devicons
+          ln -s $(pwd) ~/AppData/Local/nvim-data/site/pack/vendor/start/
+
+      - name: Run tests
+        run: |
+          $env:Path += ";Neovim/bin/"
+          nvim --version
+          make test
