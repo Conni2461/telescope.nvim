@@ -516,7 +516,7 @@ function Picker:find()
   pcall(a.nvim_buf_set_option, prompt_bufnr, 'filetype', 'TelescopePrompt')
 
   if self.default_text then
-    vim.api.nvim_buf_set_lines(prompt_bufnr, 0, 1, false, {self.default_text})
+    self:set_prompt(self.default_text)
   end
 
   if self.initial_mode == "insert" then
@@ -531,6 +531,25 @@ function Picker:hide_preview()
   -- 2. Resize prompt & results windows accordingly
 end
 
+function Picker:reset_prompt()
+  vim.api.nvim_buf_set_lines(self.prompt_bufnr, 0, -1, false, {})
+  if self.prompt_prefix ~= '' then
+    vim.api.nvim_buf_add_highlight(self.prompt_bufnr,
+      ns_telescope_prompt_prefix,
+      'TelescopePromptPrefix',
+      0,
+      0,
+      #self.prompt_prefix
+    )
+  end
+end
+
+function Picker:set_prompt(str)
+  -- TODO(conni2461): As soon as prompt_buffers are fix use this:
+  -- vim.api.nvim_buf_set_lines(self.prompt_bufnr, 0, 1, false, { str })
+  -- vim.api.nvim_buf_set_text(self.prompt_bufnr, 0, 0, 0, #str, { str })
+  vim.api.nvim_feedkeys(str, 'n', false)
+end
 
 function Picker.close_windows(status)
   local prompt_win = status.prompt_win

@@ -4,10 +4,49 @@ local a = vim.api
 
 local log = require('telescope.log')
 local path = require('telescope.path')
+local ppath = require('plenary.path')
 local state = require('telescope.state')
 local utils = require('telescope.utils')
 
 local transform_mod = require('telescope.actions.mt').transform_mod
+
+local conf = require('telescope.config').values
+
+local history_cache
+local gen_history_cache = function()
+  if not history_cache then
+    history_cache = {}
+    local p = ppath:new(vim.fn.expand(conf.telescope_history))
+    if not p:exists() then p:touch({ parents = true }) end
+    history_cache.path = p
+  end
+end
+
+local ensure_history = function()
+  if not conf.telescope_history then return end
+  gen_history_cache()
+  if not history_cache.content then
+    history_cache.content = history_cache.path:readlines()
+    table.remove(history_cache.content, table.getn(history_cache.content))
+    history_cache.index = table.getn(history_cache.content) + 1
+  end
+  return true
+end
+
+local append_to_history = function(line)
+  if not conf.telescope_history then return end
+  gen_history_cache()
+  ensure_history()
+  -- TODO(conni2461): WINDOWS? :sob:
+  if line ~= '' then
+    line = line .. '\n'
+    if history_cache.content[table.getn(history_cache.content)] ~= line then
+      history_cache.path:write(line, 'a')
+    end
+  end
+  history_cache.content = nil
+  history_cache.index = nil
+end
 
 local actions = setmetatable({}, {
   __index = function(_, k)
@@ -68,7 +107,8 @@ end
 
 -- TODO: It seems sometimes we get bad styling.
 function actions._goto_file_selection(prompt_bufnr, command)
-  local entry = actions.get_selected_entry(prompt_bufnr)
+  local entry = actions.get_selected_entry()
+  append_to_history(actions.get_current_line())
 
   if not entry then
     print("[telescope] Nothing currently selected")
@@ -320,6 +360,28 @@ actions.send_to_qflist = function(prompt_bufnr)
   actions.close(prompt_bufnr)
 
   vim.fn.setqflist(qf_entries, 'r')
+end
+
+actions.cycle_history_next = function(prompt_bufnr)
+  if not ensure_history() then return end
+  local current_picker = actions.get_current_picker(prompt_bufnr)
+  local next_idx = history_cache.index + 1
+  if next_idx <= table.getn(history_cache.content) then
+    history_cache.index = next_idx
+    current_picker:reset_prompt()
+    current_picker:set_prompt(history_cache.content[next_idx]:sub(1, -2))
+  end
+end
+
+actions.cycle_history_prev = function(prompt_bufnr)
+  if not ensure_history() then return end
+  local current_picker = actions.get_current_picker(prompt_bufnr)
+  local next_idx = history_cache.index - 1
+  if next_idx >= 1 then
+    history_cache.index = next_idx
+    current_picker:reset_prompt()
+    current_picker:set_prompt(history_cache.content[next_idx])
+  end
 end
 
 actions.open_qflist = function(_)
