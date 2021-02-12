@@ -363,6 +363,13 @@ actions.git_rebase_branch = function(prompt_bufnr)
   end
 end
 
+actions.git_checkout_current_buffer = function(prompt_bufnr)
+  local cwd = actions.get_current_picker(prompt_bufnr).cwd
+  local selection = actions.get_selected_entry()
+  actions.close(prompt_bufnr)
+  utils.get_os_command_output({ 'git', 'checkout', selection.value, '--', selection.file }, cwd)
+end
+
 actions.git_staging_toggle = function(prompt_bufnr)
   local cwd = action_state.get_current_picker(prompt_bufnr).cwd
   local selection = action_state.get_selected_entry()

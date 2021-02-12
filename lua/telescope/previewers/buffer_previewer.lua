@@ -488,14 +488,67 @@ previewers.git_branch_log = defaulter(function(opts)
   }
 end, {})
 
-previewers.git_commit_diff = defaulter(function(opts)
+previewers.git_commit_diff_to_parent = defaulter(function(opts)
   return previewers.new_buffer_previewer {
     get_buffer_by_name = function(_, entry)
       return entry.value
     end,
 
     define_preview = function(self, entry, status)
-      putils.job_maker({ 'git', '--no-pager', 'diff', entry.value .. '^!' }, self.state.bufnr, {
+      local cmd = { 'git', '--no-pager', 'diff', entry.value .. '^!' }
+      if opts.current_file then
+        table.insert(cmd, '--')
+        table.insert(cmd, opts.current_file)
+      end
+
+      putils.job_maker(cmd, self.state.bufnr, {
+        value = entry.value,
+        bufname = self.state.bufname,
+        cwd = opts.cwd
+      })
+      putils.regex_highlighter(self.state.bufnr, 'diff')
+    end
+  }
+end, {})
+
+previewers.git_commit_diff_to_head = defaulter(function(opts)
+  return previewers.new_buffer_previewer {
+    get_buffer_by_name = function(_, entry)
+      return entry.value
+    end,
+
+    define_preview = function(self, entry, status)
+      local cmd = { 'git', '--no-pager', 'diff', '--cached', entry.value }
+      if opts.current_file then
+        table.insert(cmd, '--')
+        table.insert(cmd, opts.current_file)
+      end
+
+      putils.job_maker(cmd, self.state.bufnr, {
+        value = entry.value,
+        bufname = self.state.bufname,
+        cwd = opts.cwd
+      })
+      putils.regex_highlighter(self.state.bufnr, 'diff')
+    end
+  }
+end, {})
+
+previewers.git_commit_diff_as_was = defaulter(function(opts)
+  return previewers.new_buffer_previewer {
+    get_buffer_by_name = function(_, entry)
+      return entry.value
+    end,
+
+    define_preview = function(self, entry, status)
+      local cmd = { 'git', '--no-pager', 'show' }
+      if not opts.current_file then
+        table.insert(cmd, entry.value)
+      else
+        table.insert(cmd, entry.value .. ':' .. opts.current_file)
+      end
+
+      putils.job_maker(cmd, self.state.bufnr, {
         value = entry.value,
         bufname = self.state.bufname,
         cwd = opts.cwd
