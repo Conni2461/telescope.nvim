@@ -6,6 +6,7 @@ function Previewer:new(opts)
 
   return setmetatable({
     state = nil,
+    _title_fn = opts.title,
     _setup_func = opts.setup,
     _teardown_func = opts.teardown,
     _send_input = opts.send_input,
@@ -28,6 +29,13 @@ function Previewer:preview(entry, status)
   end
 
   return self:preview_fn(entry, status)
+end
+
+function Previewer:title()
+  if self._title_fn then
+    return self:_title_fn()
+  end
+  return "Preview"
 end
 
 function Previewer:teardown()

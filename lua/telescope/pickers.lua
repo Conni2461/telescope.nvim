@@ -68,7 +68,11 @@ function Picker:new(opts)
 
     finder = opts.finder,
     sorter = opts.sorter,
+
     previewer = opts.previewer,
+    all_previewers = opts.alt_previewers or {},
+    current_previewer_index = 1,
+
     default_selection_index = opts.default_selection_index,
 
     cwd = opts.cwd,
@@ -115,6 +119,8 @@ function Picker:new(opts)
 
     preview_cutoff = get_default(opts.preview_cutoff, config.values.preview_cutoff),
   }, self)
+
+  table.insert(obj.all_previewers, 1, obj.previewer)
 
   obj.scroller = p_scroller.create(
     get_default(opts.scroll_strategy, config.values.scroll_strategy),
@@ -476,7 +482,9 @@ function Picker:find()
 
   self.prompt_bufnr = prompt_bufnr
 
-  local preview_border_win = preview_opts and preview_opts.border and preview_opts.border.win_id
+  local preview_border = preview_opts and preview_opts.border
+  self.preview_border = preview_border
+  local preview_border_win = (preview_border and preview_border.win_id) and preview_border.win_id
 
   state.set_status(prompt_bufnr, setmetatable({
     prompt_bufnr = prompt_bufnr,
@@ -769,7 +777,25 @@ function Picker:refresh_previewer()
       self._selection_entry,
       status
     )
+    if self.preview_border then
+      self.preview_border:change_title(self.previewer:title())
+    end
   end
+end
+
+function Picker:cycle_previewers(next)
+  local size = table.getn(self.all_previewers)
+  if size == 1 then return end
+
+  self.current_previewer_index = self.current_previewer_index + next
+  if self.current_previewer_index > size then
+    self.current_previewer_index = 1
+  elseif self.current_previewer_index < 1 then
+    self.current_previewer_index = size
+  end
+
+  self.previewer = self.all_previewers[self.current_previewer_index]
+  self:refresh_previewer()
 end
 
 function Picker:entry_adder(index, entry, _, insert)

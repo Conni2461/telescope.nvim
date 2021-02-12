@@ -202,7 +202,9 @@ local do_close = function(prompt_bufnr, keepinsert)
   local original_win_id = picker.original_win_id
 
   if picker.previewer then
-    picker.previewer:teardown()
+    for _, v in ipairs(picker.all_previewers) do
+      v:teardown()
+    end
   end
 
   actions.close_pum(prompt_bufnr)
@@ -473,6 +475,14 @@ end
 --- Open the quickfix list
 actions.open_qflist = function(_)
   vim.cmd [[copen]]
+end
+
+actions.cycle_previewers_next = function(prompt_bufnr)
+  actions.get_current_picker(prompt_bufnr):cycle_previewers(1)
+end
+
+actions.cycle_previewers_prev = function(prompt_bufnr)
+  actions.get_current_picker(prompt_bufnr):cycle_previewers(-1)
 end
 
 -- ==================================================

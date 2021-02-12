@@ -135,6 +135,7 @@ previewers.qflist = term_previewer.qflist
 ---
 --- In the following options, state table and general tips are mentioned to
 --- make your experience with this previewer more seamless.
+--- Deprecated previewers
 ---
 ---
 --- options:
@@ -258,9 +259,12 @@ previewers.vim_buffer_vimgrep = buffer_previewer.vimgrep
 previewers.vim_buffer_qflist = buffer_previewer.qflist
 
 
-previewers.git_branch_log = buffer_previewer.git_branch_log
-previewers.git_commit_diff = buffer_previewer.git_commit_diff
-previewers.git_file_diff = buffer_previewer.git_file_diff
+previewers.git_branch_log            = buffer_previewer.git_branch_log
+previewers.git_commit_diff           = buffer_previewer.git_commit_diff
+previewers.git_commit_diff_to_parent = buffer_previewer.git_commit_diff_to_parent
+previewers.git_commit_diff_to_head   = buffer_previewer.git_commit_diff_to_head
+previewers.git_commit_diff_as_was    = buffer_previewer.git_commit_diff_as_was
+previewers.git_file_diff             = buffer_previewer.git_file_diff
 
 
 previewers.ctags = buffer_previewer.ctags

@@ -48,6 +48,10 @@ git.commits = function(opts)
       entry_maker = opts.entry_maker or make_entry.gen_from_git_commits(opts),
     },
     previewer = previewers.git_commit_diff_to_parent.new(opts),
+    alt_previewers = {
+      previewers.git_commit_diff_to_head.new(opts),
+      previewers.git_commit_diff_as_was.new(opts),
+    },
     sorter = conf.file_sorter(opts),
     attach_mappings = function()
       actions.select_default:replace(actions.git_checkout)
@@ -59,7 +63,7 @@ end
 git.bcommits = function(opts)
   opts.current_file = opts.current_file or vim.fn.expand('%')
   local results = utils.get_os_command_output({
-    'git', 'log', '--pretty=oneline', '--abbrev-commit', opts.fname
+    'git', 'log', '--pretty=oneline', '--abbrev-commit', opts.current_file
   }, opts.cwd)
 
   pickers.new(opts, {
@@ -69,6 +73,10 @@ git.bcommits = function(opts)
       entry_maker = opts.entry_maker or make_entry.gen_from_git_commits(opts),
     },
     previewer = previewers.git_commit_diff_to_parent.new(opts),
+    alt_previewers = {
+      previewers.git_commit_diff_to_head.new(opts),
+      previewers.git_commit_diff_as_was.new(opts),
+    },
     sorter = conf.file_sorter(opts),
     attach_mappings = function()
       actions.select_default:replace(actions.git_checkout_current_buffer)

@@ -99,6 +99,7 @@ previewers.new_buffer_previewer = function(opts)
 
   local opt_setup = opts.setup
   local opt_teardown = opts.teardown
+  local opt_title = opts.title
 
   local old_bufs = {}
   local bufname_table = {}
@@ -124,6 +125,17 @@ previewers.new_buffer_previewer = function(opts)
   local function set_bufname(self, value)
     if get_bufnr(self) then bufname_table[value] = get_bufnr(self) end
     if self.state then self.state.bufname = value end
+  end
+
+  function opts.title(self)
+    if opt_title then
+      if type(opt_title) == 'function' then
+        return opt_title(self)
+      else
+        return opt_title
+      end
+    end
+    return "Preview"
   end
 
   function opts.setup(self)
@@ -214,6 +226,7 @@ end
 
 previewers.cat = defaulter(function(_)
   return previewers.new_buffer_previewer {
+    title = "File Preview",
     get_buffer_by_name = function(_, entry)
       return from_entry.path(entry, true)
     end,
@@ -240,6 +253,7 @@ previewers.vimgrep = defaulter(function(_)
   end
 
   return previewers.new_buffer_previewer {
+    title = "Grep Preview",
     setup = function()
       return {
         last_set_bufnr = nil
@@ -310,6 +324,7 @@ previewers.ctags = defaulter(function(_)
   end
 
   return previewers.new_buffer_previewer {
+    title = "Tags Preview",
     teardown = function(self)
       if self.state and self.state.hl_id then
         pcall(vim.fn.matchdelete, self.state.hl_id, self.state.hl_win)
@@ -338,6 +353,7 @@ end, {})
 
 previewers.builtin = defaulter(function(_)
   return previewers.new_buffer_previewer {
+    title = "Grep Preview",
     setup = function()
       return {}
     end,
@@ -381,6 +397,7 @@ end, {})
 
 previewers.help = defaulter(function(_)
   return previewers.new_buffer_previewer {
+    title = "Help Preview",
     setup = function()
       return {}
     end,
@@ -425,6 +442,7 @@ previewers.man = defaulter(function(opts)
     return vim.fn.executable('col') == 1 and 'col -bx' or ''
   end)
   return previewers.new_buffer_previewer {
+    title = "Man Preview",
     get_buffer_by_name = function(_, entry)
       return entry.value
     end,
@@ -467,6 +485,7 @@ previewers.git_branch_log = defaulter(function(opts)
   end
 
   return previewers.new_buffer_previewer {
+    title = "Git Branch Preview",
     get_buffer_by_name = function(_, entry)
       return entry.value
     end,
@@ -490,6 +509,7 @@ end, {})
 
 previewers.git_commit_diff_to_parent = defaulter(function(opts)
   return previewers.new_buffer_previewer {
+    title = "Git Diff to Parent Preview",
     get_buffer_by_name = function(_, entry)
       return entry.value
     end,
@@ -513,6 +533,7 @@ end, {})
 
 previewers.git_commit_diff_to_head = defaulter(function(opts)
   return previewers.new_buffer_previewer {
+    title = "Git Diff to Head Preview",
     get_buffer_by_name = function(_, entry)
       return entry.value
     end,
@@ -536,30 +557,31 @@ end, {})
 
 previewers.git_commit_diff_as_was = defaulter(function(opts)
   return previewers.new_buffer_previewer {
+    title = "Git Show Preview",
     get_buffer_by_name = function(_, entry)
       return entry.value
     end,
 
     define_preview = function(self, entry, status)
       local cmd = { 'git', '--no-pager', 'show' }
-      if not opts.current_file then
-        table.insert(cmd, entry.value)
-      else
-        table.insert(cmd, entry.value .. ':' .. opts.current_file)
-      end
+      local cf = opts.current_file and path.make_relative(opts.current_file, opts.cwd)
+      local value = cf and (entry.value .. ':' .. cf) or (entry.value)
+      local ft = cf and pfiletype.detect(value) or 'diff'
+      table.insert(cmd, value)
 
       putils.job_maker(cmd, self.state.bufnr, {
         value = entry.value,
         bufname = self.state.bufname,
         cwd = opts.cwd
       })
-      putils.regex_highlighter(self.state.bufnr, 'diff')
+      putils.highlighter(self.state.bufnr, ft)
     end
   }
 end, {})
 
 previewers.git_file_diff = defaulter(function(opts)
   return previewers.new_buffer_previewer {
+    title = "Git File Diff Preview",
     get_buffer_by_name = function(_, entry)
       return entry.value
     end,
@@ -585,6 +607,7 @@ end, {})
 
 previewers.autocommands = defaulter(function(_)
   return previewers.new_buffer_previewer {
+    title = "Autocommands Preview",
     teardown = function(self)
       if self.state and self.state.last_set_bufnr and vim.api.nvim_buf_is_valid(self.state.last_set_bufnr) then
         pcall(vim.api.nvim_buf_clear_namespace, self.state.last_set_bufnr, ns_previewer, 0, -1)
@@ -643,6 +666,7 @@ end, {})
 
 previewers.highlights = defaulter(function(_)
   return previewers.new_buffer_previewer {
+    title = "Highlights Preview",
     teardown = function(self)
       if self.state and self.state.last_set_bufnr and vim.api.nvim_buf_is_valid(self.state.last_set_bufnr) then
         vim.api.nvim_buf_clear_namespace(self.state.last_set_bufnr, ns_previewer, 0, -1)
