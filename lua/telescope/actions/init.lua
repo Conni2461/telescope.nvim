@@ -12,40 +12,45 @@ local transform_mod = require('telescope.actions.mt').transform_mod
 
 local conf = require('telescope.config').values
 
-local history_cache
-local gen_history_cache = function()
-  if not history_cache then
-    history_cache = {}
-    local p = ppath:new(vim.fn.expand(conf.telescope_history))
-    if not p:exists() then p:touch({ parents = true }) end
-    history_cache.path = p
-  end
-end
-
 local ensure_history = function()
   if not conf.telescope_history then return end
-  gen_history_cache()
+  local history_cache = state.get_global_key("history_cache")
+
+  if not history_cache then
+    history_cache = {}
+    local p_str = vim.fn.expand(conf.telescope_history)
+    local p = ppath:new(p_str)
+    if not p:exists() then p:touch({ parents = true }) end
+    history_cache.path = p_str
+    state.set_global_key("history_cache", history_cache)
+  end
   if not history_cache.content then
-    history_cache.content = history_cache.path:readlines()
+    history_cache.content = ppath:new(history_cache.path):readlines()
     table.remove(history_cache.content, table.getn(history_cache.content))
     history_cache.index = table.getn(history_cache.content) + 1
   end
   return true
 end
 
+local reset_history = function()
+  local history_cache = state.get_global_key("history_cache")
+  if history_cache and history_cache.content then
+    history_cache.index = table.getn(history_cache.content) + 1
+  end
+end
+
 local append_to_history = function(line)
-  if not conf.telescope_history then return end
-  gen_history_cache()
-  ensure_history()
+  if not ensure_history() then return end
   -- TODO(conni2461): WINDOWS? :sob:
+  local history_cache = state.get_global_key("history_cache")
   if line ~= '' then
-    line = line .. '\n'
+    line = line
     if history_cache.content[table.getn(history_cache.content)] ~= line then
-      history_cache.path:write(line, 'a')
+      ppath:new(history_cache.path):write(line .. '\n', 'a')
+      table.insert(history_cache.content, line)
     end
   end
-  history_cache.content = nil
-  history_cache.index = nil
+  reset_history()
 end
 
 local actions = setmetatable({}, {
@@ -208,6 +213,7 @@ function actions.close_pum(_)
 end
 
 local do_close = function(prompt_bufnr, keepinsert)
+  reset_history()
   local picker = actions.get_current_picker(prompt_bufnr)
   local prompt_win = state.get_status(prompt_bufnr).prompt_win
   local original_win_id = picker.original_win_id
@@ -364,17 +370,22 @@ end
 
 actions.cycle_history_next = function(prompt_bufnr)
   if not ensure_history() then return end
+  local history_cache = state.get_global_key("history_cache")
   local current_picker = actions.get_current_picker(prompt_bufnr)
   local next_idx = history_cache.index + 1
   if next_idx <= table.getn(history_cache.content) then
     history_cache.index = next_idx
     current_picker:reset_prompt()
-    current_picker:set_prompt(history_cache.content[next_idx]:sub(1, -2))
+    current_picker:set_prompt(history_cache.content[next_idx])
+  else
+    history_cache.index = table.getn(history_cache.content) + 1
+    current_picker:reset_prompt()
   end
 end
 
 actions.cycle_history_prev = function(prompt_bufnr)
   if not ensure_history() then return end
+  local history_cache = state.get_global_key("history_cache")
   local current_picker = actions.get_current_picker(prompt_bufnr)
   local next_idx = history_cache.index - 1
   if next_idx >= 1 then
