@@ -51,6 +51,7 @@ git.commits = function(opts)
     alt_previewers = {
       previewers.git_commit_diff_to_head.new(opts),
       previewers.git_commit_diff_as_was.new(opts),
+      previewers.git_commit_message.new(opts),
     },
     sorter = conf.file_sorter(opts),
     attach_mappings = function()
@@ -76,6 +77,7 @@ git.bcommits = function(opts)
     alt_previewers = {
       previewers.git_commit_diff_to_head.new(opts),
       previewers.git_commit_diff_as_was.new(opts),
+      previewers.git_commit_message.new(opts),
     },
     sorter = conf.file_sorter(opts),
     attach_mappings = function()

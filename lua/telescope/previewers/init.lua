@@ -264,6 +264,7 @@ previewers.git_commit_diff           = buffer_previewer.git_commit_diff
 previewers.git_commit_diff_to_parent = buffer_previewer.git_commit_diff_to_parent
 previewers.git_commit_diff_to_head   = buffer_previewer.git_commit_diff_to_head
 previewers.git_commit_diff_as_was    = buffer_previewer.git_commit_diff_as_was
+previewers.git_commit_message        = buffer_previewer.git_commit_message
 previewers.git_file_diff             = buffer_previewer.git_file_diff
 
 
