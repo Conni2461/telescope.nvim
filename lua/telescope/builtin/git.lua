@@ -5,6 +5,7 @@ local make_entry = require('telescope.make_entry')
 local pickers = require('telescope.pickers')
 local previewers = require('telescope.previewers')
 local utils = require('telescope.utils')
+local path = require('telescope.path')
 
 local conf = require('telescope.config').values
 
@@ -82,6 +83,52 @@ git.bcommits = function(opts)
     sorter = conf.file_sorter(opts),
     attach_mappings = function()
       actions.select_default:replace(actions.git_checkout_current_buffer)
+      local transfrom_file = function()
+        return opts.current_file and path.make_relative(opts.current_file, opts.cwd)
+      end
+
+      local get_og = function(selection)
+        local value = selection.value .. ':' .. transfrom_file()
+        return utils.get_os_command_output({ 'git', '--no-pager', 'show', value }, opts.cwd)
+      end
+
+      local vimdiff = function(selection, command)
+        local ft = vim.bo.filetype
+        vim.cmd("diffthis")
+        local content = get_og(selection)
+        vim.cmd(command)
+
+        local bufnr = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_win_set_buf(0, bufnr)
+        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, content)
+        vim.api.nvim_buf_set_name(bufnr, 'Git Diff')
+        vim.bo.filetype = ft
+        vim.cmd("diffthis")
+
+        vim.cmd(string.format(
+          "autocmd WinClosed <buffer=%s> ++nested ++once :lua vim.api.nvim_buf_delete(%s, { force = true })",
+          bufnr,
+          bufnr))
+      end
+
+      actions.select_vertical:replace(function(prompt_bufnr)
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        vimdiff(selection, 'leftabove vnew')
+      end)
+
+      actions.select_horizontal:replace(function(prompt_bufnr)
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        vimdiff(selection, 'belowright new')
+      end)
+
+      actions.select_tab:replace(function(prompt_bufnr)
+        actions.close(prompt_bufnr)
+        local selection = action_state.get_selected_entry()
+        vim.cmd('tabedit ' .. transfrom_file())
+        vimdiff(selection, 'leftabove vnew')
+      end)
       return true
     end
   }):find()
