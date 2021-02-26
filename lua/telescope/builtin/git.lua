@@ -62,7 +62,13 @@ git.commits = function(opts)
   }):find()
 end
 
+local get_current_buf_line = function(winnr)
+  local lnum = vim.api.nvim_win_get_cursor(winnr)[1]
+  return vim.trim(vim.api.nvim_buf_get_lines(vim.api.nvim_win_get_buf(winnr), lnum - 1, lnum, false)[1])
+end
+
 git.bcommits = function(opts)
+  opts.current_line = (not opts.current_file) and get_current_buf_line(0) or nil
   opts.current_file = opts.current_file or vim.fn.expand('%')
   local results = utils.get_os_command_output({
     'git', 'log', '--pretty=oneline', '--abbrev-commit', opts.current_file
