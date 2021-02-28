@@ -69,8 +69,7 @@ function Picker:new(opts)
     finder = opts.finder,
     sorter = opts.sorter,
 
-    previewer = opts.previewer,
-    all_previewers = opts.alt_previewers or {},
+    all_previewers = opts.previewer,
     current_previewer_index = 1,
 
     default_selection_index = opts.default_selection_index,
@@ -120,7 +119,14 @@ function Picker:new(opts)
     preview_cutoff = get_default(opts.preview_cutoff, config.values.preview_cutoff),
   }, self)
 
-  table.insert(obj.all_previewers, 1, obj.previewer)
+  if obj.all_previewers ~= nil and obj.all_previewers ~= false then
+    if obj.all_previewers[1] == nil then
+      obj.all_previewers = { obj.all_previewers }
+    end
+    obj.previewer = obj.all_previewers[1]
+  else
+    obj.previewer = false
+  end
 
   obj.scroller = p_scroller.create(
     get_default(opts.scroll_strategy, config.values.scroll_strategy),

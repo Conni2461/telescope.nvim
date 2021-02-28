@@ -48,8 +48,8 @@ git.commits = function(opts)
       results = results,
       entry_maker = opts.entry_maker or make_entry.gen_from_git_commits(opts),
     },
-    previewer = previewers.git_commit_diff_to_parent.new(opts),
-    alt_previewers = {
+    previewer = {
+      previewers.git_commit_diff_to_parent.new(opts),
       previewers.git_commit_diff_to_head.new(opts),
       previewers.git_commit_diff_as_was.new(opts),
       previewers.git_commit_message.new(opts),
@@ -80,8 +80,8 @@ git.bcommits = function(opts)
       results = results,
       entry_maker = opts.entry_maker or make_entry.gen_from_git_commits(opts),
     },
-    previewer = previewers.git_commit_diff_to_parent.new(opts),
-    alt_previewers = {
+    previewer = {
+      previewers.git_commit_diff_to_parent.new(opts),
       previewers.git_commit_diff_to_head.new(opts),
       previewers.git_commit_diff_as_was.new(opts),
       previewers.git_commit_message.new(opts),
@@ -93,21 +93,22 @@ git.bcommits = function(opts)
         return opts.current_file and path.make_relative(opts.current_file, opts.cwd)
       end
 
-      local get_og = function(selection)
+      local get_buffer_of_orig = function(selection)
         local value = selection.value .. ':' .. transfrom_file()
-        return utils.get_os_command_output({ 'git', '--no-pager', 'show', value }, opts.cwd)
+        local content = utils.get_os_command_output({ 'git', '--no-pager', 'show', value }, opts.cwd)
+
+        local bufnr = vim.api.nvim_create_buf(false, true)
+        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, content)
+        vim.api.nvim_buf_set_name(bufnr, 'Original')
+        return bufnr
       end
 
       local vimdiff = function(selection, command)
         local ft = vim.bo.filetype
         vim.cmd("diffthis")
-        local content = get_og(selection)
-        vim.cmd(command)
 
-        local bufnr = vim.api.nvim_create_buf(false, true)
-        vim.api.nvim_win_set_buf(0, bufnr)
-        vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, content)
-        vim.api.nvim_buf_set_name(bufnr, 'Git Diff')
+        local bufnr = get_buffer_of_orig(selection)
+        vim.cmd(string.format("%s %s", command, bufnr))
         vim.bo.filetype = ft
         vim.cmd("diffthis")
 
@@ -120,20 +121,20 @@ git.bcommits = function(opts)
       actions.select_vertical:replace(function(prompt_bufnr)
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
-        vimdiff(selection, 'leftabove vnew')
+        vimdiff(selection, 'leftabove vert sbuffer')
       end)
 
       actions.select_horizontal:replace(function(prompt_bufnr)
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
-        vimdiff(selection, 'belowright new')
+        vimdiff(selection, 'belowright sbuffer')
       end)
 
       actions.select_tab:replace(function(prompt_bufnr)
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
         vim.cmd('tabedit ' .. transfrom_file())
-        vimdiff(selection, 'leftabove vnew')
+        vimdiff(selection, 'leftabove vert sbuffer')
       end)
       return true
     end

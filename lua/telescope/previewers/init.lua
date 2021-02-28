@@ -135,7 +135,6 @@ previewers.qflist = term_previewer.qflist
 ---
 --- In the following options, state table and general tips are mentioned to
 --- make your experience with this previewer more seamless.
---- Deprecated previewers
 ---
 ---
 --- options:
