@@ -59,8 +59,7 @@ function config.set_defaults(defaults)
 
     config.values[name] = get(name, default_val)
     if description then
-      -- TODO(conni2461): trim is wrong. We need to do dedent here
-      config.descriptions[name] = dedent(vim.trim(description))
+      config.descriptions[name] = dedent(description)
     end
   end
 
@@ -165,6 +164,14 @@ function config.set_defaults(defaults)
   set("file_sorter", sorters.get_fuzzy_file)
 
   set("file_ignore_patterns", nil)
+
+  set("dynamic_preview_title", false, [[
+    Will change the title of the preview window dynamically, where it
+    is supported. Means the preview window will for example show the
+    full filename.
+
+    Default: false
+  ]])
 
   set("file_previewer", function(...) return require('telescope.previewers').vim_buffer_cat.new(...) end)
   set("grep_previewer", function(...) return require('telescope.previewers').vim_buffer_vimgrep.new(...) end)

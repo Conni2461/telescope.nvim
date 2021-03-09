@@ -784,7 +784,11 @@ function Picker:refresh_previewer()
       status
     )
     if self.preview_border then
-      self.preview_border:change_title(self.previewer:title())
+      if config.values.dynamic_preview_title == true then
+        self.preview_border:change_title(self.previewer:dynamic_title(self._selection_entry))
+      else
+        self.preview_border:change_title(self.previewer:title())
+      end
     end
   end
 end

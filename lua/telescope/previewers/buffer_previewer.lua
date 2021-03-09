@@ -119,6 +119,7 @@ previewers.new_buffer_previewer = function(opts)
   local opt_setup = opts.setup
   local opt_teardown = opts.teardown
   local opt_title = opts.title
+  local opt_dyn_title = opts.dyn_title
 
   local old_bufs = {}
   local bufname_table = {}
@@ -153,6 +154,13 @@ previewers.new_buffer_previewer = function(opts)
       else
         return opt_title
       end
+    end
+    return "Preview"
+  end
+
+  function opts.dyn_title(self, entry)
+    if opt_dyn_title then
+      return opt_dyn_title(self, entry)
     end
     return "Preview"
   end
@@ -243,9 +251,15 @@ previewers.new_buffer_previewer = function(opts)
   return Previewer:new(opts)
 end
 
-previewers.cat = defaulter(function(_)
+previewers.cat = defaulter(function(opts)
+  opts = opts or {}
+  local cwd = opts.cwd or vim.loop.cwd()
   return previewers.new_buffer_previewer {
     title = "File Preview",
+    dyn_title = function(_, entry)
+      return path.normalize(from_entry.path(entry, true), cwd)
+    end,
+
     get_buffer_by_name = function(_, entry)
       return from_entry.path(entry, true)
     end,
@@ -260,7 +274,10 @@ previewers.cat = defaulter(function(_)
   }
 end, {})
 
-previewers.vimgrep = defaulter(function(_)
+previewers.vimgrep = defaulter(function(opts)
+  opts = opts or {}
+  local cwd = opts.cwd or vim.loop.cwd()
+
   local jump_to_line = function(self, bufnr, lnum)
     if lnum and lnum > 0 then
       pcall(vim.api.nvim_buf_add_highlight, bufnr, ns_previewer, "TelescopePreviewLine", lnum - 1, 0, -1)
@@ -273,10 +290,12 @@ previewers.vimgrep = defaulter(function(_)
 
   return previewers.new_buffer_previewer {
     title = "Grep Preview",
+    dyn_title = function(_, entry)
+      return path.normalize(from_entry.path(entry, true), cwd)
+    end,
+
     setup = function()
-      return {
-        last_set_bufnr = nil
-      }
+      return { last_set_bufnr = nil }
     end,
 
     teardown = function(self)

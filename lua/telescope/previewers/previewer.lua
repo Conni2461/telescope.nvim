@@ -7,6 +7,7 @@ function Previewer:new(opts)
   return setmetatable({
     state = nil,
     _title_fn = opts.title,
+    _dyn_title_fn = opts.dyn_title,
     _setup_func = opts.setup,
     _teardown_func = opts.teardown,
     _send_input = opts.send_input,
@@ -34,6 +35,13 @@ end
 function Previewer:title()
   if self._title_fn then
     return self:_title_fn()
+  end
+  return "Preview"
+end
+
+function Previewer:dynamic_title(entry)
+  if self._title_fn then
+    return self:_dyn_title_fn(entry)
   end
   return "Preview"
 end
