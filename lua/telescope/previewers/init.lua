@@ -53,6 +53,11 @@ local previewers = {}
 ---   - `teardown` function(self): Will be called on cleanup.
 ---   - `preview_fn` function(self, entry, status): Will be called each time
 ---                                                 a new entry was selected.
+---   - `title` function(self): Will return the static title of the previewer.
+---   - `dynamic_title` function(self, entry): Will return the dynamic title of
+---                                            the previewer. Will only be called
+---                                            when config value dynamic_preview_title
+---                                            is true.
 ---   - `send_input` function(self, input): This is meant for
 ---                                         `termopen_previewer` and it can be
 ---                                         used to send input to the terminal
@@ -72,9 +77,16 @@ end
 --- It requires you to specify one table entry `get_command(entry, status)`.
 --- This `get_command` function has to return the terminal command that will be
 --- executed for each entry. Example:
+--- <pre>
 ---   get_command = function(entry, status)
 ---     return { 'bat', entry.path }
 ---   end
+--- </pre>
+---
+--- Additionally you can define:
+--- - `title` a static title for example "File Preview"
+--- - `dyn_title(self, entry)` a dynamic title function which gets called
+--- when config value `dynamic_preview_title = true`
 ---
 --- It's an easy way to get your first previewer going and it integrates well
 --- with `bat` and `less`. Providing out of the box scrolling if the command
@@ -164,6 +176,9 @@ previewers.qflist = term_previewer.qflist
 ---     useful if you have one file but multiple entries. This happens for grep
 ---     and lsp builtins. So to make the cache work only load content if
 ---     `self.state.bufname ~= entry.your_unique_key`
+---   - `title` a static title for example "File Preview"
+---   - `dyn_title(self, entry)` a dynamic title function which gets called
+---     when config value `dynamic_preview_title = true`
 ---
 --- `self.state` table:
 ---   - `self.state.bufnr`
