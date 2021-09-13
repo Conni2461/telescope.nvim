@@ -222,10 +222,10 @@ local my_cool_custom_action = transform_mod({
 })
 ```
 
-To remap telescope mappings, please read `help telescope.defaults.mappings`.
+To remap telescope mappings, please read `:help telescope.defaults.mappings`.
 To do picker specific mappings, its suggested to do this with the `pickers`
 table in `telescope.setup`. Each picker accepts a `mappings` table like its
-explained in `help telescope.defaults.mappings`.
+explained in `:help telescope.defaults.mappings`.
 
 ## Pickers
 
@@ -469,6 +469,9 @@ tab completions and setting options.
 "like so:
 :Telescope find_files find_command=rg,--ignore,--hidden,--files prompt_prefix=🔍
 ```
+
+for more information and how to realize more complex commands please read
+`:help telescope.command`.
 
 ## Autocmds
 

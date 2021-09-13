@@ -2,6 +2,7 @@ local _extensions = require "telescope._extensions"
 
 local telescope = {}
 
+-- TODO(conni2461): also table of contents for tree-sitter-lua
 -- TODO: Add pre to the works
 -- ---@pre [[
 -- ---@pre ]]
@@ -10,24 +11,70 @@ local telescope = {}
 --- Telescope.nvim is a plugin for fuzzy finding and neovim. It helps you search,
 --- filter, find and pick things in Lua.
 ---
---- TODO(conni2461): Write a getting started here!!!
+--- Getting started with telescope:
+---   1. Run `:checkhealth telescope` to make sure everything is installed.
+---   2. Evalulate it working with
+---      `:Telescope find_files` or
+---      `:lua require("telescope.builtin").find_files()`
+---   3. Put a `require("telescope").setup() call somewhere in your neovim config.
+---   4. Read |telescope.setup| to check what config keys are available and what you can put inside the setup call
+---   5. Read |telescope.builtin| to check which builtin pickers are offered and what options these implement
+---   6. Profit
 ---
 --- <pre>
 --- To find out more:
 --- https://github.com/nvim-telescope/telescope.nvim
 ---
 ---   :h telescope.setup
+---   :h telescope.command
 ---   :h telescope.builtin
+---   :h telescope.themes
 ---   :h telescope.layout
+---   :h telescope.resolve
 ---   :h telescope.actions
+---   :h telescope.actions.state
+---   :h telescope.actions.set
+---   :h telescope.actions.utils
+---   :h telescope.actions.generate
+---   :h telescope.previewers
+---   :h telescope.actions.history
 --- </pre>
 ---@brief ]]
 
 ---@tag telescope.nvim
 
---- Setup function to be run by user. Configures the defaults, extensions
---- and other aspects of telescope.
----@param opts table: Configuration opts. Keys: defaults, extensions
+--TODO(conni2461): code block support
+
+--- Setup function to be run by user. Configures the defaults, pickers and
+--- extensions of telescope.
+---
+--- Usage:
+--- <pre>
+--- require('telescope').setup{
+---   defaults = {
+---     -- Default configuration for telescope goes here:
+---     -- config_key = value,
+---     -- ..
+---   },
+---   pickers = {
+---     -- Default configuration for builtin pickers goes here:
+---     -- picker_name = {
+---     --   picker_config_key = value,
+---     --   ...
+---     -- }
+---     -- Now the picker_config_key will be applied every time you call this
+---     -- builtin picker
+---   },
+---   extensions = {
+---     -- Your extension configuration goes here:
+---     -- extension_name = {
+---     --   extension_config_key = value,
+---     -- }
+---     -- please take a look at the readme of the extension you want to configure
+---   }
+--- }
+--- </pre>
+---@param opts table: Configuration opts. Keys: defaults, pickers, extensions
 ---@eval { ["description"] = require('telescope').__format_setup_keys() }
 function telescope.setup(opts)
   opts = opts or {}
