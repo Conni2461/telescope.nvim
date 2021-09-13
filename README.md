@@ -88,6 +88,12 @@ use {
 }
 ```
 
+### checkhealth
+
+Make sure you call `:checkhealth telescope` after installing telescope to ensure
+everything is setup correctly.
+
+
 ## Usage
 
 Try the command `:Telescope find_files<cr>`
