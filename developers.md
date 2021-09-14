@@ -24,7 +24,7 @@ pickers, finders, actions, and the previewer. You will find more information
 in specific help pages and we likely will move some of the technical stuff to
 our vim help docs in the future.
 
-This guide is mainly for telescope so it will assume that a lua lua knowledge is
+This guide is mainly for telescope so it will assume that a lua knowledge is
 present. You can find information for lua here:
 - [Lua 5.1 Manual](https://www.lua.org/manual/5.1/)
 - [Getting started using Lua in Neovim](https://github.com/nanotee/nvim-lua-guide)
