@@ -559,7 +559,7 @@ builtin.live_grep({opts})                                *builtin.live_grep()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cwd}                 (string)    root dir to search from (default:
                                           cwd, use utils.buffer_dir() to
                                           search relative to open buffer)
@@ -584,7 +584,7 @@ builtin.grep_string({opts})                            *builtin.grep_string()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cwd}                 (string)    root dir to search from (default:
                                           cwd, use utils.buffer_dir() to
                                           search relative to open buffer)
@@ -611,7 +611,7 @@ builtin.find_files({opts})                              *builtin.find_files()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cwd}          (string)   root dir to search from (default: cwd, use
                                   utils.buffer_dir() to search relative to
                                   open buffer)
@@ -650,7 +650,7 @@ builtin.file_browser({opts})                          *builtin.file_browser()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cwd}      (string)   root dir to browse from (default: cwd, use
                               utils.buffer_dir() to search relative to open
                               buffer)
@@ -667,7 +667,7 @@ builtin.treesitter()                                    *builtin.treesitter()*
         node you want to see (i.e. `:var:`)
 
 
-    Fields: ~
+    Options: ~
         {show_line}         (boolean)  if true, shows the row:column that the
                                        result is found at (default: true)
         {bufnr}             (number)   specify the buffer number where
@@ -684,7 +684,7 @@ builtin.current_buffer_fuzzy_find({opts})*builtin.current_buffer_fuzzy_find()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {skip_empty_lines} (boolean)  if true we dont display empty lines
                                       (default: false)
 
@@ -698,7 +698,7 @@ builtin.tags({opts})                                          *builtin.tags()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cwd}            (string)   root dir to search from (default: cwd, use
                                     utils.buffer_dir() to search relative to
                                     open buffer)
@@ -717,7 +717,7 @@ builtin.current_buffer_tags({opts})            *builtin.current_buffer_tags()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cwd}            (string)   root dir to search from (default: cwd, use
                                     utils.buffer_dir() to search relative to
                                     open buffer)
@@ -740,7 +740,7 @@ builtin.git_files({opts})                                *builtin.git_files()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cwd}                (string)   specify the path of the repo
         {use_git_root}       (boolean)  if we should use git root as cwd or
                                         the cwd (important for submodule)
@@ -765,7 +765,7 @@ builtin.git_commits({opts})                            *builtin.git_commits()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cwd}          (string)   specify the path of the repo
         {use_git_root} (boolean)  if we should use git root as cwd or the cwd
                                   (important for submodule) (default: true)
@@ -783,7 +783,7 @@ builtin.git_bcommits({opts})                          *builtin.git_bcommits()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cwd}          (string)   specify the path of the repo
         {use_git_root} (boolean)  if we should use git root as cwd or the cwd
                                   (important for submodule) (default: true)
@@ -808,7 +808,7 @@ builtin.git_branches({opts})                          *builtin.git_branches()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cwd}          (string)   specify the path of the repo
         {use_git_root} (boolean)  if we should use git root as cwd or the cwd
                                   (important for submodule) (default: true)
@@ -824,7 +824,7 @@ builtin.git_status({opts})                              *builtin.git_status()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cwd}          (string)   specify the path of the repo
         {use_git_root} (boolean)  if we should use git root as cwd or the cwd
                                   (important for submodule) (default: true)
@@ -842,7 +842,7 @@ builtin.git_stash({opts})                                *builtin.git_stash()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cwd}          (string)   specify the path of the repo
         {use_git_root} (boolean)  if we should use git root as cwd or the cwd
                                   (important for submodule) (default: true)
@@ -855,7 +855,7 @@ builtin.builtin({opts})                                    *builtin.builtin()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {ignore_filename}    (boolean)  dont show filenames (default: true)
         {include_extensions} (boolean)  if true will show the pickers of the
                                         installed extensions (default: false)
@@ -871,7 +871,7 @@ builtin.resume({opts})                                      *builtin.resume()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {cache_index} (number)  what picker to resume, where 1 denotes most
                                 recent (default: 1)
 
@@ -897,7 +897,7 @@ builtin.planets({opts})                                    *builtin.planets()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {show_pluto} (boolean)  we love pluto (default: false, because its a
                                 hidden feature)
 
@@ -914,7 +914,7 @@ builtin.symbols({opts})                                    *builtin.symbols()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {symbol_path} (string)  specify the second path. Default:
                                 `stdpath("data")/telescope/symbols/*.json`
         {sources}     (table)   specify a table of sources you want to load
@@ -936,7 +936,7 @@ builtin.quickfix({opts})                                  *builtin.quickfix()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {ignore_filename} (boolean)  dont show filenames (default: true)
 
 
@@ -948,7 +948,7 @@ builtin.loclist({opts})                                    *builtin.loclist()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {ignore_filename} (boolean)  dont show filenames (default: true)
 
 
@@ -959,7 +959,7 @@ builtin.oldfiles({opts})                                  *builtin.oldfiles()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {only_cwd} (boolean)  show only files in the cwd (default: false)
 
 
@@ -1001,7 +1001,7 @@ builtin.help_tags({opts})                                *builtin.help_tags()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {lang}     (string)   specify language (default: vim.o.helplang)
         {fallback} (boolean)  fallback to en if language isn't installed
                               (default: true)
@@ -1014,7 +1014,7 @@ builtin.man_pages({opts})                                *builtin.man_pages()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {sections} (table)     a list of sections to search, use `{ "ALL" }`
                                to search in all sections (default: { "1" })
         {man_cmd}  (function)  that returns the man command. (Default:
@@ -1028,7 +1028,7 @@ builtin.reloader({opts})                                  *builtin.reloader()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {column_len} (number)  define the max column len for the module name
                                (default: dynamic, longest module name)
 
@@ -1041,7 +1041,7 @@ builtin.buffers({opts})                                    *builtin.buffers()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {show_all_buffers}      (boolean)  if true, show all buffers,
                                            including unloaded buffers
                                            (default: true)
@@ -1068,7 +1068,7 @@ builtin.colorscheme({opts})                            *builtin.colorscheme()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {enable_preview} (boolean)  if true, will preview the selected color
 
 
@@ -1139,7 +1139,7 @@ builtin.tagstack({opts})                                  *builtin.tagstack()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {ignore_filename} (boolean)  dont show filenames (default: true)
 
 
@@ -1150,7 +1150,7 @@ builtin.jumplist({opts})                                  *builtin.jumplist()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {ignore_filename} (boolean)  dont show filenames (default: true)
 
 
@@ -1162,7 +1162,7 @@ builtin.lsp_references({opts})                      *builtin.lsp_references()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {timeout} (number)  timeout for the sync call (default: 10000)
 
 
@@ -1174,7 +1174,7 @@ builtin.lsp_definitions({opts})                    *builtin.lsp_definitions()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {timeout}         (number)   timeout for the sync call (default:
                                      10000)
         {jump_type}       (string)   how to goto definition if there is only
@@ -1191,7 +1191,7 @@ builtin.lsp_type_definitions({opts})          *builtin.lsp_type_definitions()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {timeout}         (number)   timeout for the sync call (default:
                                      10000)
         {jump_type}       (string)   how to goto definition if there is only
@@ -1208,7 +1208,7 @@ builtin.lsp_implementations({opts})            *builtin.lsp_implementations()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {timeout}         (number)   timeout for the sync call (default:
                                      10000)
         {jump_type}       (string)   how to goto implementation if there is
@@ -1225,7 +1225,7 @@ builtin.lsp_code_actions({opts})                  *builtin.lsp_code_actions()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {timeout} (number)  timeout for the sync call (default: 10000)
 
 
@@ -1236,7 +1236,7 @@ builtin.lsp_range_code_actions({opts})      *builtin.lsp_range_code_actions()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {timeout}    (number)  timeout for the sync call (default: 10000)
         {start_line} (number)  where the code action ends (default: handled by
                                :'<,'>Telescope lsp_range_code_actions)
@@ -1252,7 +1252,7 @@ builtin.lsp_document_symbols({opts})          *builtin.lsp_document_symbols()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {timeout}           (number)        timeout for the sync call
                                             (default: 10000)
         {ignore_filename}   (boolean)       dont show filenames (default:
@@ -1275,7 +1275,7 @@ builtin.lsp_workspace_symbols({opts})        *builtin.lsp_workspace_symbols()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {query}             (string)        for what to query the workspace
                                             (default: "")
         {timeout}           (number)        timeout for the sync call
@@ -1300,7 +1300,7 @@ builtin.lsp_dynamic_workspace_symbols({opts})*builtin.lsp_dynamic_workspace_symb
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {ignore_filename}   (boolean)  dont show filenames (default: false)
         {show_line}         (boolean)  if true, shows the content of the line
                                        the symbol is found on (default: false)
@@ -1321,7 +1321,7 @@ builtin.lsp_document_diagnostics({opts})  *builtin.lsp_document_diagnostics()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {severity}       (string|number)  filter diagnostics by severity name
                                           (string) or id (number)
         {severity_limit} (string|number)  keep diagnostics equal or more
@@ -1350,7 +1350,7 @@ builtin.lsp_workspace_diagnostics({opts})*builtin.lsp_workspace_diagnostics()*
     Parameters: ~
         {opts} (table)  options to pass to the picker
 
-    Fields: ~
+    Options: ~
         {severity}       (string|number)  filter diagnostics by severity name
                                           (string) or id (number)
         {severity_limit} (string|number)  keep diagnostics equal or more
