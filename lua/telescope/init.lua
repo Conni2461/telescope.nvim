@@ -43,13 +43,11 @@ local telescope = {}
 
 ---@tag telescope.nvim
 
---TODO(conni2461): code block support
-
 --- Setup function to be run by user. Configures the defaults, pickers and
 --- extensions of telescope.
 ---
 --- Usage:
---- <pre>
+--- <code>
 --- require('telescope').setup{
 ---   defaults = {
 ---     -- Default configuration for telescope goes here:
@@ -73,7 +71,7 @@ local telescope = {}
 ---     -- please take a look at the readme of the extension you want to configure
 ---   }
 --- }
---- </pre>
+--- </code>
 ---@param opts table: Configuration opts. Keys: defaults, pickers, extensions
 ---@eval { ["description"] = require('telescope').__format_setup_keys() }
 function telescope.setup(opts)

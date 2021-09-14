@@ -12,16 +12,16 @@
 --- To use any of Telescope's default options or any picker-specific options, call your desired picker by passing a lua
 --- table to the picker with all of the options you want to use. Here's an example with the live_grep picker:
 ---
---- <pre>
---- :lua require('telescope.builtin').live_grep({
----   prompt_title = 'find string in open buffers...',
----   grep_open_files = true
---- })
---- -- or with dropdown theme
---- :lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown{
----   previewer = false
---- })
---- </pre>
+--- <code>
+---   :lua require('telescope.builtin').live_grep({
+---     prompt_title = 'find string in open buffers...',
+---     grep_open_files = true
+---   })
+---   -- or with dropdown theme
+---   :lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown{
+---     previewer = false
+---   })
+--- </code>
 ---@brief ]]
 
 if 1 ~= vim.fn.has "nvim-0.5" then

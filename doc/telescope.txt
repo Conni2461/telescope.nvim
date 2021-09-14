@@ -37,6 +37,7 @@ telescope.setup({opts})                                    *telescope.setup()*
     extensions of telescope.
 
     Usage:
+    >
     require('telescope').setup{
       defaults = {
         -- Default configuration for telescope goes here:
@@ -60,6 +61,7 @@ telescope.setup({opts})                                    *telescope.setup()*
         -- please take a look at the readme of the extension you want to configure
       }
     }
+<
 
 
     Valid keys for {opts.defaults}
@@ -538,14 +540,16 @@ To use any of Telescope's default options or any picker-specific options, call
 your desired picker by passing a lua table to the picker with all of the
 options you want to use. Here's an example with the live_grep picker:
 
-:lua require('telescope.builtin').live_grep({
-  prompt_title = 'find string in open buffers...',
-  grep_open_files = true
-})
--- or with dropdown theme
-:lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown{
-  previewer = false
-})
+>
+  :lua require('telescope.builtin').live_grep({
+    prompt_title = 'find string in open buffers...',
+    grep_open_files = true
+  })
+  -- or with dropdown theme
+  :lua require('telescope.builtin').find_files(require('telescope.themes').get_dropdown{
+    previewer = false
+  })
+<
 
 builtin.live_grep({opts})                                *builtin.live_grep()*
     Search for a string and get results live as you type (respecting
@@ -1374,10 +1378,11 @@ themes.get_dropdown()                                  *themes.get_dropdown()*
     Dropdown style theme.
 
     Usage:
-
+    >
         `local builtin = require('telescope.builtin')`
         `local themes = require('telescope.themes')`
         `builtin.find_files(themes.get_dropdown())`
+<
 
 
 
@@ -1385,10 +1390,12 @@ themes.get_cursor()                                      *themes.get_cursor()*
     Cursor style theme.
 
     Usage:
+    >
 
         `local builtin = require('telescope.builtin')`
         `local themes = require('telescope.themes')`
         `builtin.lsp_code_actions(themes.get_cursor())`
+<
 
 
 
@@ -1396,10 +1403,11 @@ themes.get_ivy()                                            *themes.get_ivy()*
     Ivy style theme.
 
     Usage:
-
+    >
         `local builtin = require('telescope.builtin')`
         `local themes = require('telescope.themes')`
         `builtin.find_files(themes.get_ivy())`
+<
 
 
 
@@ -1411,6 +1419,7 @@ Layout strategies are different functions to position telescope.
 
 All layout strategies are functions with the following signature:
 
+>
   function(picker, columns, lines, layout_config)
     -- Do some calculations here...
     return {
@@ -1419,6 +1428,7 @@ All layout strategies are functions with the following signature:
       prompt = prompt_configuration,
     }
   end
+<
 
   Parameters: ~
     - picker        : A Picker object. (docs coming soon)
@@ -2086,18 +2096,21 @@ utils.map_entries({prompt_bufnr}, {f})                   *utils.map_entries()*
       - Indices are 1-indexed, whereas rows are 0-indexed.
     - Warning: `map_entries` has no return value.
       - The below example showcases how to collect results
+
     Usage:
-        local action_state = require "telescope.actions.state"
-        local action_utils = require "telescope.actions.utils"
-        function entry_value_by_row()
-          local prompt_bufnr = vim.api.nvim_get_current_buf()
-          local current_picker = action_state.get_current_picker(prompt_bufnr)
-          local results = {}
-            action_utils.map_entries(prompt_bufnr, function(entry, index, row)
-            results[row] = entry.value
-          end)
-          return results
-        end
+    >
+      local action_state = require "telescope.actions.state"
+      local action_utils = require "telescope.actions.utils"
+      function entry_value_by_row()
+        local prompt_bufnr = vim.api.nvim_get_current_buf()
+        local current_picker = action_state.get_current_picker(prompt_bufnr)
+        local results = {}
+          action_utils.map_entries(prompt_bufnr, function(entry, index, row)
+          results[row] = entry.value
+        end)
+        return results
+      end
+<
 
 
     Parameters: ~
@@ -2115,18 +2128,21 @@ utils.map_selections({prompt_bufnr}, {f})             *utils.map_selections()*
       - Selected entries are returned in order of their selection.
     - Warning: `map_selections` has no return value.
       - The below example showcases how to collect results
+
     Usage:
-        local action_state = require "telescope.actions.state"
-        local action_utils = require "telescope.actions.utils"
-        function selection_by_index()
-          local prompt_bufnr = vim.api.nvim_get_current_buf()
-          local current_picker = action_state.get_current_picker(prompt_bufnr)
-          local results = {}
-            action_utils.map_selections(prompt_bufnr, function(entry, index)
-            results[index] = entry.value
-          end)
-          return results
-        end
+    >
+      local action_state = require "telescope.actions.state"
+      local action_utils = require "telescope.actions.utils"
+      function selection_by_index()
+        local prompt_bufnr = vim.api.nvim_get_current_buf()
+        local current_picker = action_state.get_current_picker(prompt_bufnr)
+        local results = {}
+          action_utils.map_selections(prompt_bufnr, function(entry, index)
+          results[index] = entry.value
+        end)
+        return results
+      end
+<
 
 
     Parameters: ~
@@ -2152,6 +2168,7 @@ Module for convenience to override defaults of corresponding
 |telescope.actions| at |telescope.setup()|.
 
 General usage:
+>
   require("telescope").setup {
     defaults = {
       mappings = {
@@ -2166,6 +2183,7 @@ General usage:
       },
     },
   }
+<
 
 action_generate.which_key({opts})                *action_generate.which_key()*
     Display the keymaps of registered actions similar to which-key.nvim.
@@ -2293,9 +2311,11 @@ previewers.new_termopen_previewer()      *previewers.new_termopen_previewer()*
     It requires you to specify one table entry `get_command(entry, status)`.
     This `get_command` function has to return the terminal command that will be
     executed for each entry. Example:
+    >
       get_command = function(entry, status)
         return { 'bat', entry.path }
       end
+<
 
     Additionally you can define:
     - `title` a static title for example "File Preview"
@@ -2434,10 +2454,12 @@ previewers.new_buffer_previewer()          *previewers.new_buffer_previewer()*
         - `require('telescope.previewers.utils').ts_highlighter(bufnr, ft)`
       - If you want to use `vim.fn.search` or similar you need to run it in 
         that specific buffer context. Do
+    >
           vim.api.nvim_buf_call(bufnr, function()
             -- for example `search` and `matchadd`
           end)
         to achieve that.
+<
       - If you want to read a file into the buffer it's best to use 
         `buffer_previewer_maker`. But access this function with 
         `require('telescope.config').values.buffer_previewer_maker` because it
