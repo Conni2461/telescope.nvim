@@ -24,7 +24,7 @@ pickers, finders, actions and the previewer. You can find more information
 in specific help pages and we will probably move some of the technical stuff to
 our vim help docs in the future.
 
-This guide is mainly for telescope so it will assume that already have some knowledge of the Lua
+This guide is mainly for telescope so it will assume that you already have some knowledge of the Lua
 programming language. If not then you can find information for Lua here:
 - [Lua 5.1 Manual](https://www.lua.org/manual/5.1/)
 - [Getting started using Lua in Neovim](https://github.com/nanotee/nvim-lua-guide)
@@ -162,7 +162,7 @@ remove the default actions to move the selected item in the picker,
 If the function does not return anything then an error is thrown. 
 
 The `attach_mappings` function has two parameters, `prompt_bufnr` is the buffer number
-of the prompt buffer, which we can use to get the pickers object and `map` is a table
+of the prompt buffer, which we can use to get the pickers object and `map` is a function
 we can use to map actions or functions to arbitrary key sequences.
 
 Now we are replacing `select_default` the default action, which is mapped to `<CR>`
