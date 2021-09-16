@@ -221,8 +221,7 @@ action.
 
 The `display` key is required and is either a string or a `function(tbl)`,
 where `tbl` is the table returned by `entry_maker`. So in this example `tbl` would
-give our `display` function access to `value` and `ordinal`. (Not `display` as 
-that would be a reference to itself.)
+give our `display` function access to `value` and `ordinal`.
 
 If our picker will have a lot lot of values it's suggested to use a function for `display`
 especially if you are modifying the text to display. This way the function will only be executed 
