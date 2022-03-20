@@ -86,6 +86,7 @@ end
 ---@param command string: The command to use to open the file.
 --      Valid commands include: "edit", "new", "vedit", "tabedit"
 action_set.edit = function(prompt_bufnr, command)
+  require("telescope.actions").close(prompt_bufnr)
   local entry = action_state.get_selected_entry()
 
   if not entry then
@@ -127,29 +128,38 @@ action_set.edit = function(prompt_bufnr, command)
     col = tonumber(sections[3])
   end
 
-  local entry_bufnr = entry.bufnr
-
-  require("telescope.actions").close(prompt_bufnr)
-
-  if entry_bufnr then
-    if not vim.api.nvim_buf_get_option(entry_bufnr, "buflisted") then
-      vim.api.nvim_buf_set_option(entry_bufnr, "buflisted", true)
+  local goto_file = function()
+    local entry_bufnr = entry.bufnr
+    if entry_bufnr then
+      if not vim.api.nvim_buf_get_option(entry_bufnr, "buflisted") then
+        vim.api.nvim_buf_set_option(entry_bufnr, "buflisted", true)
+      end
+      edit_buffer(command, entry_bufnr)
+    else
+      -- check if we didn't pick a different buffer
+      -- prevents restarting lsp server
+      if vim.api.nvim_buf_get_name(0) ~= filename or command ~= "edit" then
+        filename = Path:new(vim.fn.fnameescape(filename)):normalize(vim.loop.cwd())
+        pcall(vim.cmd, string.format("%s %s", command, filename))
+      end
     end
-    edit_buffer(command, entry_bufnr)
-  else
-    -- check if we didn't pick a different buffer
-    -- prevents restarting lsp server
-    if vim.api.nvim_buf_get_name(0) ~= filename or command ~= "edit" then
-      filename = Path:new(vim.fn.fnameescape(filename)):normalize(vim.loop.cwd())
-      pcall(vim.cmd, string.format("%s %s", command, filename))
+
+    if row and col then
+      local ok, err_msg = pcall(a.nvim_win_set_cursor, 0, { row, col })
+      if not ok then
+        log.debug("Failed to move to cursor:", err_msg, row, col)
+      end
     end
   end
 
-  if row and col then
-    local ok, err_msg = pcall(a.nvim_win_set_cursor, 0, { row, col })
-    if not ok then
-      log.debug("Failed to move to cursor:", err_msg, row, col)
-    end
+  if vim.api.nvim_get_mode().mode == "n" then
+    goto_file()
+  else
+    vim.api.nvim_create_autocmd("InsertLeave", {
+      once = true,
+      nested = true,
+      callback = goto_file,
+    })
   end
 end
 
