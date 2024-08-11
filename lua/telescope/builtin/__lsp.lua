@@ -454,10 +454,7 @@ lsp.dynamic_workspace_symbols = function(opts)
 end
 
 local function check_capabilities(method, bufnr)
-  --TODO(clason): remove when dropping support for Nvim 0.9
-  local get_clients = vim.fn.has "nvim-0.10" == 1 and vim.lsp.get_clients or vim.lsp.get_active_clients
-  local clients = get_clients { bufnr = bufnr }
-
+  local clients = vim.lsp.get_clients { bufnr = bufnr }
   for _, client in pairs(clients) do
     if client.supports_method(method, { bufnr = bufnr }) then
       return true
